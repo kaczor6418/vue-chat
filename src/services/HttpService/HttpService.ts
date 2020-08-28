@@ -1,10 +1,10 @@
-import {IHttpService} from "./interfaces/IHttpService";
-import {HttpRequestMethods} from "./interfaces/HttpRequestMethods";
-import {HttpServiceResponse} from "./interfaces/HttpServiceResponse";
+import { IHttpService } from './interfaces/IHttpService';
+import { HttpRequestMethods } from './interfaces/HttpRequestMethods';
+import { HttpServiceResponse } from './interfaces/HttpServiceResponse';
 
 export class HttpService implements IHttpService {
     private readonly baseUrl: string;
-    private url: string = '';
+    private url = '';
     private options: RequestInit = {};
 
     constructor(baseUrl: string) {
@@ -40,15 +40,14 @@ export class HttpService implements IHttpService {
         return {
             resource: null,
             response
-        }
+        };
     }
 
-    private isValidResponse({status}: Response): boolean {
+    private isValidResponse({ status }: Response): boolean {
         if (status >= 200 && status < 400) {
             return true;
         }
         console.error(`Could not fetch data from url: ${this.url}. Request finished with status code: ${status}`);
         return false;
     }
-
 }

@@ -51,7 +51,8 @@
       "ecmaVersion": 2020
     },
     "rules": {
-      "@typescript-eslint/no-namespace": 0
+      "@typescript-eslint/no-namespace": 0,
+      "@typescript-eslint/interface-name-prefix": 0
     },
     "overrides": [
       {
