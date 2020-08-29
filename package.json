@@ -52,7 +52,9 @@
     },
     "rules": {
       "@typescript-eslint/no-namespace": 0,
-      "@typescript-eslint/interface-name-prefix": 0
+      "@typescript-eslint/interface-name-prefix": 0,
+      "@typescript-eslint/no-inner-declarations": 0,
+      "@typescript-eslint/no-inferrable-types": 0
     },
     "overrides": [
       {
