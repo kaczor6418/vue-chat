@@ -11,7 +11,7 @@ import { Component, Vue } from 'vue-property-decorator';
 export default class Divider extends Vue {}
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 hr {
     margin: 0;
     border-color: #e8e8e8;

@@ -89,7 +89,7 @@ export default class SingleComment extends Vue {
 }
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .message__content {
     display: flex;
     align-items: flex-start;

@@ -9,13 +9,13 @@ import { Component, Prop, Vue } from 'vue-property-decorator';
 
 @Component({})
 export default class Avatar extends Vue {
-    @Prop({ required: true }) readonly avatarUrl!: string;
+    @Prop() readonly avatarUrl!: string;
     @Prop({ default: 'https://brainstormcursos.com.br/wp-content/uploads/2016/01/default-avatar-128x128.jpg' })
     readonly defaultAvatarUrl!: string;
 }
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 object,
 img {
     width: 64px;

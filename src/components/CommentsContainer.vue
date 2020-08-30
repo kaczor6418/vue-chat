@@ -46,7 +46,7 @@ export default class CommentsContainer extends Vue {
 }
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 div {
     padding: 5px 5px 0;
 
