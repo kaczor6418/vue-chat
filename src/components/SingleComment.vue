@@ -74,7 +74,7 @@ export default class SingleComment extends Vue {
         } else if (minutes > 0) {
             return minutes === 1 ? `minutę temu` : this.isDifferent(minutes) ? `${minutes} minuty temu` : `${minutes} minut temu`;
         }
-        return seconds === 1 ? `sekundę temu` : this.isDifferent(seconds) ? `${seconds} sekund temu` : `${seconds} sekundy temu`;
+        return seconds <= 1 ? `sekundę temu` : this.isDifferent(seconds) ? `${seconds} sekund temu` : `${seconds} sekundy temu`;
     }
 
     private isDifferent(time: number): boolean {
@@ -89,7 +89,7 @@ export default class SingleComment extends Vue {
 }
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .message__content {
     display: flex;
     align-items: flex-start;
@@ -102,6 +102,8 @@ export default class SingleComment extends Vue {
         margin: 0;
         padding: 0;
         text-align: left;
+        overflow: hidden;
+        overflow-wrap: break-word;
     }
     time {
         color: #b0b0b0;
