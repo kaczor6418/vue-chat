@@ -6,7 +6,8 @@
             <avatar class="avatar" :avatar-url="userData.avatar"></avatar>
             <div
                 id="message_container"
-                @keyup.enter="createNewComment()"
+                @keyup.enter="createNewComment"
+                @keydown="handleKeyDown"
                 class="content"
                 contenteditable="true"
                 data-placeholder="Dodaj komentarz..."
@@ -32,9 +33,13 @@ import { UTILS } from '@/common/Utils';
 import { Channels } from '@/common/Channels';
 import { EventBus } from '@/EventBus';
 import { User } from '@/common/interfaces/User';
+import MentionUser from '@/components/MentionUser.vue';
+import { CursorService } from '@/services/CursorService/CursorService';
+import { ICursorService } from '@/services/CursorService/interfaces/ICursorService';
 
 @Component({
     components: {
+        MentionUser,
         AlertBox,
         Divider,
         Avatar,
@@ -54,6 +59,7 @@ export default class CommentEditor extends Vue {
 
     private errorMessageId: number | undefined = undefined;
     private messageContainer!: HTMLDivElement;
+    private isMentionActive: boolean = false;
 
     constructor() {
         super();
@@ -62,6 +68,31 @@ export default class CommentEditor extends Vue {
 
     mounted(): void {
         this.setMessageContainer();
+        EventBus.$on(Channels.MENTION_CONFIRM_RESPONSE, this.setMentionedUser);
+    }
+
+    beforeDestroy(): void {
+        EventBus.$off(Channels.MENTION_CONFIRM_RESPONSE, this.setMentionedUser);
+    }
+
+    public handleKeyDown(e: KeyboardEvent): void {
+        if (e.key === 'Tab' && this.isMentionActive) {
+            e.preventDefault();
+            this.confirmMention();
+        } else if (e.key === '@') {
+            this.mentionUser();
+        } else if (e.key === 'ArrowUp' && this.isMentionActive) {
+            e.preventDefault();
+            this.mentionUp();
+        } else if (e.key === 'ArrowDown' && this.isMentionActive) {
+            e.preventDefault();
+            this.mentionDown();
+        } else if ((e.key === 'Escape' || e.key === ' ') && this.isMentionActive) {
+            e.preventDefault();
+            this.abortMention();
+        } else if (e.key === 'Backspace' && this.messageContainer.lastChild?.textContent === '@' && this.isMentionActive) {
+            this.abortMention();
+        }
     }
 
     public async createNewComment(): Promise<void> {
@@ -96,16 +127,58 @@ export default class CommentEditor extends Vue {
         this.messageContainer.innerHTML = '';
     }
 
+    private mentionUser(): void {
+        this.isMentionActive = true;
+        EventBus.$emit(Channels.MENTION_USER, null);
+    }
+
+    private mentionUp(): void {
+        EventBus.$emit(Channels.MENTION_UP, null);
+    }
+
+    private mentionDown(): void {
+        EventBus.$emit(Channels.MENTION_DOW, null);
+    }
+
+    private confirmMention(): void {
+        this.isMentionActive = false;
+        EventBus.$emit(Channels.MENTION_CONFIRM_REQUEST, null);
+    }
+
+    private abortMention(): void {
+        this.isMentionActive = false;
+        EventBus.$emit(Channels.MENTION_ABORT, null);
+    }
+
     private setMessageContainer(): void {
         const messageContainer: HTMLDivElement | null = this.$el.querySelector('#message_container');
         if (!UTILS.isNullOrUndefined(messageContainer)) {
             this.messageContainer = messageContainer;
         }
     }
+
+    /*eslint-disable */
+    private setMentionedUser({ first_name, last_name }: User): void {
+        this.messageContainer.textContent = this.messageContainer.textContent?.slice(0, -1) ?? '';
+        const mentionedUser: HTMLElement = document.createElement('b');
+        mentionedUser.style.color = '#3785df';
+        mentionedUser.textContent = `${first_name} ${last_name}`;
+        this.messageContainer.appendChild(mentionedUser);
+        const newLastElement1: HTMLSpanElement = document.createElement('span');
+        newLastElement1.innerHTML = '&nbsp;';
+        this.messageContainer.appendChild(newLastElement1);
+        const cursorService: ICursorService = new CursorService(this.messageContainer);
+        cursorService.setEndOfContentEditable();
+    }
+    /*eslint-enable */
 }
 </script>
 
 <style lang="scss" scoped>
+.mention_user {
+    max-height: 50%;
+    width: 100%;
+}
 .alert {
     margin: 0 10% 10px;
     position: absolute;
@@ -117,13 +190,11 @@ div {
     max-height: 100%;
     position: relative;
     .message-editor__wrapper {
-        position: absolute;
-        bottom: 0;
-        width: 100%;
         max-width: 100%;
-        max-height: calc(100% - 2px);
+        height: calc(100% - 2px);
         display: flex;
-        justify-content: space-between;
+        justify-content: center;
+        align-items: center;
         padding: 10px;
 
         .avatar {
@@ -139,6 +210,7 @@ div {
             &:empty:not(:focus) {
                 align-self: center;
             }
+
             &[contentEditable='true']:empty:not(:focus):before {
                 content: attr(data-placeholder);
             }

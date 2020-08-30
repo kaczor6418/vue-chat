@@ -30,6 +30,7 @@ import { Channels } from '@/common/Channels';
 })
 export default class CommentsContainer extends Vue {
     private readonly httpService: IHttpService;
+
     private comments: Comment[] = [];
 
     constructor() {
@@ -39,7 +40,11 @@ export default class CommentsContainer extends Vue {
 
     created(): void {
         void this.setCommentsData();
-        EventBus.$on(Channels.ADD_COMMENT, this.addNewComment.bind(this));
+        EventBus.$on(Channels.ADD_COMMENT, this.addNewComment);
+    }
+
+    beforeDestroy(): void {
+        EventBus.$off(Channels.ADD_COMMENT, this.addNewComment);
     }
 
     private async setCommentsData(): Promise<void> {
