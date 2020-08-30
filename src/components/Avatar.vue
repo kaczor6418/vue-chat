@@ -6,11 +6,12 @@
 
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator';
+import { CONSTANTS } from '@/common/CONSTANTS';
 
 @Component({})
 export default class Avatar extends Vue {
     @Prop() readonly avatarUrl!: string;
-    @Prop({ default: 'https://brainstormcursos.com.br/wp-content/uploads/2016/01/default-avatar-128x128.jpg' })
+    @Prop({ default: CONSTANTS.DEFAULT_AVATAR_URL })
     readonly defaultAvatarUrl!: string;
 }
 </script>

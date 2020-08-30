@@ -19,6 +19,8 @@ import { CONSTANTS } from '@/common/CONSTANTS';
 import { HttpServiceResponse } from '@/services/HttpService/interfaces/HttpServiceResponse';
 import { UTILS } from '@/common/Utils';
 import Divider from '@/components/Divider.vue';
+import { EventBus } from '@/EventBus';
+import { Channels } from '@/common/Channels';
 
 @Component({
     components: {
@@ -37,11 +39,16 @@ export default class CommentsContainer extends Vue {
 
     created(): void {
         void this.setCommentsData();
+        EventBus.$on(Channels.ADD_COMMENT, this.addNewComment.bind(this));
     }
 
     private async setCommentsData(): Promise<void> {
         const requestResult: HttpServiceResponse<Comment[]> = await this.httpService.get<Comment[]>('comments');
         this.comments = UTILS.isNullOrUndefined(requestResult.resource) ? [] : requestResult.resource;
+    }
+
+    private addNewComment(comment: Comment): void {
+        this.comments.push(comment);
     }
 }
 </script>
@@ -49,12 +56,13 @@ export default class CommentsContainer extends Vue {
 <style lang="scss" scoped>
 div {
     padding: 5px 5px 0;
+    max-height: 100%;
 
     ul {
+        max-height: 100%;
         list-style: none;
         margin: 0;
         padding: 0;
-        max-height: 80vh;
         overflow-y: auto;
 
         &::-webkit-scrollbar-track {
