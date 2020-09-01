@@ -1,4 +1,3 @@
-import { UTILS } from '@/common/Utils';
 import { ICursorService } from '@/services/CursorService/interfaces/ICursorService';
 
 export class CursorService implements ICursorService {

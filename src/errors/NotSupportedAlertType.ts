@@ -3,5 +3,4 @@ export class NotSupportedAlertType extends Error {
         super(message);
         this.name = NotSupportedAlertType.name;
     }
-
 }

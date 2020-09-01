@@ -7,7 +7,7 @@
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator';
 import { AlertType } from '@/components/AlertBox/interfaces/AlertType';
-import { NotSupportedAlertType } from '../../../errors/NotSupportedAlertType';
+import { NotSupportedAlertType } from '../../errors/NotSupportedAlertType';
 
 @Component({})
 export default class AlertBox extends Vue {
